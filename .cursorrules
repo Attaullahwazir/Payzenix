@@ -1,0 +1,14 @@
+# Project Context: Secure Payment Gateway
+We are building a PCI-DSS compliant payment gateway system.
+**Core Tech Stack:** Python (Flask), MySQL, SQLAlchemy, Docker, Redis.
+**Frontend:** HTML5, TailwindCSS, Vanilla JS (Mobile-First/PWA).
+**Security (CRITICAL):**
+- AES-256 encryption for all sensitive fields (Card numbers, CVV).
+- JWT for session management.
+- Regex validation for all inputs.
+- TLS 1.3 enforcement.
+- Never log raw card data. Mask all PANs (e.g., ************1234).
+**Advanced Features:**
+- WebAuthn (Biometric Passkeys).
+- AI Fraud Detection (Scikit-learn Isolation Forest).
+- Blockchain Ledger for immutable transaction logs.

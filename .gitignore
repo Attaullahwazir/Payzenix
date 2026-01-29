@@ -1,0 +1,48 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+.venv
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Environment
+.env
+.env.local
+
+# Database
+*.db
+*.sqlite3
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Docker
+mysql_data/
+redis_data/
+
+# Logs
+*.log
+logs/
+
+# Blockchain ledger
+ledger.json
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Security - never commit these
+*.pem
+*.key
+secrets/
+

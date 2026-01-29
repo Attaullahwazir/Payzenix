@@ -1,0 +1,76 @@
+services:
+  db:
+    image: mysql:8.0
+    container_name: payment_db
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-rootpassword}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-payment_gateway}
+      MYSQL_USER: ${MYSQL_USER:-paymentuser}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-paymentpass}
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - payment_network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    user: "999:999"
+
+  redis:
+    image: redis:7-alpine
+    container_name: payment_redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - payment_network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    user: "999:999"
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: payment_backend
+    ports:
+      - "5000:5000"
+    environment:
+      - FLASK_ENV=${FLASK_ENV:-production}
+      - MYSQL_HOST=db
+      - MYSQL_USER=${MYSQL_USER:-paymentuser}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD:-paymentpass}
+      - MYSQL_DATABASE=${MYSQL_DATABASE:-payment_gateway}
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - SECRET_KEY=${SECRET_KEY}
+      - AES_KEY=${AES_KEY}
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+    volumes:
+      - ./app:/app/app
+      - ./ledger.json:/app/ledger.json
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - payment_network
+    user: "1000:1000"
+
+volumes:
+  mysql_data:
+  redis_data:
+
+networks:
+  payment_network:
+    driver: bridge
+
